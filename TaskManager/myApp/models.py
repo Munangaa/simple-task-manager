@@ -60,7 +60,7 @@ class Task(Metadata):
     description = models.TextField(max_length=100, null=True)
 
     priority = models.CharField(max_length=20, choices=Priority_choices, )
-    due_date = models.DateTimeField()
+    due_date = models.DateTimeField(null=True)
     status = models.ForeignKey(States, on_delete=CASCADE)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_created')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_created',null=True)
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_assigned', null=True)

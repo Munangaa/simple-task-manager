@@ -1,4 +1,4 @@
-from TaskManager.myApp.models import RolePermission
+from ..models import RolePermission
 
 
 def user_has_permission(user,permission_codename):
