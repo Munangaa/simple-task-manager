@@ -28,10 +28,16 @@ class States(Metadata):
     name = models.CharField(max_length=20)
     description = models.TextField(max_length=100, null=True)
 
+    def __str__(self):
+        return self.status_type
+
 
 class Role(Metadata):
     name = models.CharField(max_length=20)
     state = models.ForeignKey(States, on_delete=CASCADE, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Permission(Metadata):
@@ -39,15 +45,23 @@ class Permission(Metadata):
     codename = models.CharField(max_length=30)
     description = models.TextField(max_length=100, null=True)
 
+    def __str__(self):
+        return self.codename
+
 
 class RolePermission(Metadata):
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.role} - {self.permission}'
+
 
 class User(AbstractUser, Metadata):
-
     user_role = models.ForeignKey(Role, on_delete=CASCADE , default=1)
+
+    def __str__(self):
+        return self.username
 
 
 class Task(Metadata):
@@ -58,9 +72,12 @@ class Task(Metadata):
     )
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=100, null=True)
-
     priority = models.CharField(max_length=20, choices=Priority_choices, )
     due_date = models.DateTimeField(null=True)
     status = models.ForeignKey(States, on_delete=CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_created',null=True)
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks_assigned', null=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title

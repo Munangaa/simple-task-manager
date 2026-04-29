@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views.auth_views import UserRegisterView, UserLoginView
+from .views.auth_views import UserRegisterView, UserLoginView, PasswordResetView, PasswordResetConfirmView
 from .views.task_views import TaskListView, TaskDetailListView
 from .views.user_views import UserListView, UserTaskView, UserDetailView, UpdateTaskStatusView, AssignTaskView
 
@@ -15,7 +15,10 @@ urlpatterns = [
     path('users/<int:task_id>/update/', UpdateTaskStatusView.as_view()),
     # path('tasks/create/', create_task),
     path('register/',UserRegisterView.as_view()),
-    path('login/',UserLoginView.as_view())
+    path('login/',UserLoginView.as_view()),
+    path('forgot-password/', PasswordResetView.as_view()),
+    path('reset-password/<str:token>/', PasswordResetConfirmView.as_view()),
+
 
     # path('tasks/<int:id>',get_task),
     # path('tasks/<int:id>/update/', update_task),

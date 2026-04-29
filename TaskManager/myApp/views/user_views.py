@@ -147,16 +147,27 @@ class UpdateTaskStatusView(View):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=404)
-        status_name = data.get('status')
-        if not status_name:
-            return JsonResponse({'error': 'Status required'}, status=400)
-        status = get_object_or_404(States, name=status_name)
-        task = get_object_or_404(Task, id=task_id)
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        is_completed = data.get('is_completed')
+        task = get_object_or_404(Task,id=task_id)
+
+        status_type = 'DONE' if is_completed else 'IN_PROGRESS'
+        status= get_object_or_404(States,status_type=status_type)
+        # status_name = data.get('status')
 
         task.status = status
         task.save()
+        # if not status_name:
+        #     return JsonResponse({'error': 'Status required'}, status=400)
+        # status = get_object_or_404(States, name=status_name)
+        # task = get_object_or_404(Task, id=task_id)
+        #
+        # task.status = status
+        # task.save()
 
         return JsonResponse({
             'message': 'Task status successfully updated',
+            'id': task.id,
+            'status': task.status.status_type,
         })

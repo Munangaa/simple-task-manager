@@ -17,17 +17,32 @@ class TaskListView(View):
         # error = validate_request(request, 'view_task', ['GET'])
         # if error:
         #     return error
+        user_id = request.GET.get('user_id')
+        if user_id:
+            tasks = Task.objects.filter(assigned_to = user_id,is_deleted = False)
+        else:
+            tasks = Task.objects.filter(is_deleted=False)
 
-        tasks = Task.objects.all()
+        # tasks = Task.objects.all()
+
+        # tasks = Task.objects.filter(assigned_to = user_id)
 
         data = [{
-            'title': task.title,
-            'status': task.status.name
+        'id': task.id,
+        'title': task.title,
+        'description': task.description,
+        'due_date': task.due_date.isoformat() if task.due_date else None,
+        'is_completed': task.status.status_type == 'COMPLETED',
+        'priority':task.priority,
+        'status':task.status.status_type,
+        'assigned_to': task.assigned_to.id if task.assigned_to else None,
+        'created_by': task.created_by.id if task.created_by else None,
+        # 'priority': task.priority if hasattr(task, 'priority') else 'low',
         }
             for task in tasks
         ]
 
-        return JsonResponse({"tasks": data})
+        return JsonResponse(data,safe=False)
 
     def post(self, request):
         # error = validate_request(request, 'create_task', ['POST'])
@@ -40,14 +55,37 @@ class TaskListView(View):
 
         title = data.get('title')
         description = data.get('description')
+        priority = data.get('priority','LOW')
+        due_date = data.get('due_date')
+        assigned_to_id = data.get('assigned_to')
+
         if not title:
-            return JsonResponse({'error':'Title required'})
+            return JsonResponse({'error':'Title required'},status=400)
 
-        status_type = data.get('status', 'PENDING').upper()
-        status = get_object_or_404(States, status_type = status_type)
 
-        task = Task.objects.create(title=title, description=description, status=status)
-        return JsonResponse({'Message': "Task created successfully", 'task_id': task.id}, status=201)
+        status = get_object_or_404(States,status_type = 'PENDING')
+
+        # status_type = data.get('status', 'PENDING').upper()
+        # status = get_object_or_404(States, status_type = status_type)
+
+        task = Task.objects.create(
+            title=title,
+            description=description,
+            status=status,
+            priority=priority,
+            due_date=due_date,
+            assigned_to_id=assigned_to_id
+        )
+        return JsonResponse(
+            {'Message': "Task created successfully",
+        'id': task.id,
+        'title': task.title,
+        'description': task.description,
+        'priority': task.priority,
+        'due_date': task.due_date.isoformat() if task.due_date else None,
+        'status': task.status.status_type,
+        'assigned_to': task.assigned_to.id if task.assigned_to else None,
+             }, status=201)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
