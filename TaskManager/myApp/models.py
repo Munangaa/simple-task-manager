@@ -59,7 +59,7 @@ class RolePermission(Metadata):
 
 class User(AbstractUser, Metadata):
     user_role = models.ForeignKey(Role, on_delete=CASCADE , default=1)
-
+    email = models.EmailField(unique=True)
     def __str__(self):
         return self.username
 

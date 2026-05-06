@@ -1,5 +1,7 @@
 import json
 import secrets
+from datetime import timedelta, datetime
+
 from  django.core.mail import  send_mail
 from django.contrib.auth import  get_user_model
 from django.contrib.auth import authenticate
@@ -49,15 +51,16 @@ class UserRegisterView(View):
 
         return JsonResponse({
             'message': 'User created successfully',
+            'user_id' :user.id,
 
-            'user': {
+
 
 
                 'username': user.username,
                 'email': user.email,
                 'role': user.user_role.name
 
-            },
+
 
         }, status=201)
 
@@ -65,8 +68,6 @@ class UserRegisterView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class UserLoginView(View):
     def post(self, request):
-        # if request.method !='GET':
-        #     return JsonResponse({'error':'Method should be 'GET'})
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
@@ -82,8 +83,12 @@ class UserLoginView(View):
             return JsonResponse({'error': 'Wrong credentials'})
         # return JsonResponse({'message': 'Successful login'})
 
+
         token = secrets.token_hex(32)
-        tokens[token] = user.id
+        tokens[token] = {
+            'user_id':user.id,
+            'expires_at':datetime.now()+ timedelta(hours=1)
+        }
 
         return JsonResponse({
             'message':'succesful login',
@@ -93,7 +98,7 @@ class UserLoginView(View):
             'role':user.user_role.name if user.user_role else 'Member',
             'email':user.email,
         })
-@method_decorator(csrf_exempt, 'dispatch')
+@method_decorator(csrf_exempt, name= 'dispatch')
 class PasswordResetView(View):
     def post(self,request):
         try:
@@ -106,11 +111,14 @@ class PasswordResetView(View):
             return JsonResponse({'error': 'Email required'}, status=400)
 
         UserModel = get_user_model()
-        try:
-            user = UserModel.objects.get(email=email)
-        except UserModel.DoesNotExist:
-            # Don't reveal if email exists or not for security
+        user = UserModel.objects.filter(email=email).first()
+        if not user:
             return JsonResponse({'message': 'If this email exists you will receive a reset link'})
+        # try:
+        #     user = UserModel.objects.get(email=email)
+        # except UserModel.DoesNotExist:
+        #     # Don't reveal if email exists or not for security
+        #     return JsonResponse({'message': 'If this email exists you will receive a reset link'})
 
             # Generate reset token
         token = secrets.token_hex(32)
