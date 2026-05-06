@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,12 +21,12 @@ AUTH_USER_MODEL = 'myApp.User'
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y7662wht^#h6*hqswbeuv&n3!ndd%mz0)9-oc!m+-enxr*z#s1'
+SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-y7662wht^#h6*hqswbeuv&n3!ndd%mz0)9-oc!m+-enxr*z#s1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG','False') == 'True'
 
-ALLOWED_HOSTS = ['192.168.1.22','192.168.1.46', '127.0.0.1', 'localhost','192.168.0.102']
+ALLOWED_HOSTS = ['192.168.1.22','192.168.1.46', '127.0.0.1', 'localhost','192.168.0.102','.railway.app']
 
 
 # Application definition
