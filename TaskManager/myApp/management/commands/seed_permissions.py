@@ -1,8 +1,8 @@
 from django.core.management import BaseCommand
 from django.utils.translation.trans_null import activate
-from myApp.models import Permission, RolePermission, Role
+from .models import Permission, RolePermission, Role, States
 
-from TaskManager.myApp.models import States
+
 
 
 class Command(BaseCommand):
