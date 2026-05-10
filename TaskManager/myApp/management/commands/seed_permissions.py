@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 from django.utils.translation.trans_null import activate
-from .models import Permission, RolePermission, Role, States
+from myApp.models import Permission, RolePermission, Role, States
 
 
 
