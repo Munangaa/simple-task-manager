@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn TaskManager.wsgi
+web: python manage.py createsuperuser --noinput --username admin --email admin@taskit.com && gunicorn TaskManager.wsgi --bind 0.0.0.0:$PORT
