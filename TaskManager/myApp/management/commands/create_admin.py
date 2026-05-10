@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-
+from myApp.models import Role
 
 class Command(BaseCommand):
     help = 'Create superuser with staff access'
@@ -8,21 +8,29 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         User = get_user_model()
 
+        # ✅ Get Manager role
+        try:
+            role = Role.objects.get(name='Manager')
+        except Role.DoesNotExist:
+            self.stdout.write(' Run seed_permissions first!')
+            return
+
         if not User.objects.filter(username='admin').exists():
-            user = User.objects.create_superuser(
+            user = User(
                 username='admin',
                 email='admin@taskit.com',
-                password='Admin1234!'
+                is_staff=True,
+                is_superuser=True,
+                user_role=role,
             )
-            user.is_staff = True
-            user.is_superuser = True
+            user.set_password('Admin1234!')
             user.save()
-            self.stdout.write('Superuser created successfully!')
+            self.stdout.write(' Superuser created!')
         else:
-            # ✅ Update existing admin to have staff access
             user = User.objects.get(username='admin')
             user.is_staff = True
             user.is_superuser = True
+            user.user_role = role
             user.set_password('Admin1234!')
             user.save()
-            self.stdout.write('Superuser updated successfully!')
+            self.stdout.write(' Superuser updated!')
