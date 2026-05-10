@@ -16,12 +16,11 @@ class Command(BaseCommand):
             return
 
         if User.objects.filter(username='admin').exists():
-
             User.objects.filter(username='admin').delete()
             self.stdout.write('Deleted existing admin')
 
         # if not User.objects.filter(username='admin').exists():
-            user = User(
+        user = User(
                 username='admin',
                 email='admin@taskit.com',
                 is_staff=True,
@@ -29,8 +28,8 @@ class Command(BaseCommand):
                 is_active=True,
                 user_role=role,
             )
-            user.set_password('Admin1234!')
-            user.save()
+        user.set_password('Admin1234!')
+        user.save()
             # self.stdout.write(' Superuser created!')
         # else:
         #     user = User.objects.get(username='admin')
@@ -40,7 +39,7 @@ class Command(BaseCommand):
         #     user.set_password('Admin1234!')
         #     user.save()
         #     self.stdout.write(' Superuser updated!')
-            self.stdout.write(f'✅ Superuser created!')
-            self.stdout.write(f'is_staff: {user.is_staff}')
-            self.stdout.write(f'is_superuser: {user.is_superuser}')
-            self.stdout.write(f'is_active: {user.is_active}')
+        self.stdout.write(f'Superuser created!')
+        self.stdout.write(f'is_staff: {user.is_staff}')
+        self.stdout.write(f'is_superuser: {user.is_superuser}')
+        self.stdout.write(f'is_active: {user.is_active}')
