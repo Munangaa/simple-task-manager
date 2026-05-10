@@ -6,6 +6,7 @@ class Command(BaseCommand):
     help = 'Create superuser with staff access'
 
     def handle(self, *args, **kwargs):
+        self.stdout.write('=== CREATE ADMIN STARTED ===')
         User = get_user_model()
 
 
@@ -15,20 +16,26 @@ class Command(BaseCommand):
             self.stdout.write(' Manager role not found!')
             return
 
+
         if User.objects.filter(username='admin').exists():
             User.objects.filter(username='admin').delete()
             self.stdout.write('Deleted existing admin')
 
         # if not User.objects.filter(username='admin').exists():
-        user = User(
+        user = User.objects.create_superuser(
                 username='admin',
                 email='admin@taskit.com',
-                is_staff=True,
-                is_superuser=True,
-                is_active=True,
-                user_role=role,
+                password = 'Admin1234!',
+                # is_staff=True,
+                # is_superuser=True,
+                # is_active=True,
+                # user_role=role,
             )
-        user.set_password('Admin1234!')
+        user.user_role = role,
+        user.is_staff=True,
+        user.is_superuser= True,
+        user.is_active=True,
+        # user.set_password('Admin1234!')
         user.save()
             # self.stdout.write(' Superuser created!')
         # else:
