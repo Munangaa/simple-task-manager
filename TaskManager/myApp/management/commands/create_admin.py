@@ -8,29 +8,39 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         User = get_user_model()
 
-        # ✅ Get Manager role
+
         try:
             role = Role.objects.get(name='Manager')
         except Role.DoesNotExist:
-            self.stdout.write(' Run seed_permissions first!')
+            self.stdout.write(' Manager role not found!')
             return
 
-        if not User.objects.filter(username='admin').exists():
+        if User.objects.filter(username='admin').exists():
+
+            User.objects.filter(username='admin').delete()
+            self.stdout.write('Deleted existing admin')
+
+        # if not User.objects.filter(username='admin').exists():
             user = User(
                 username='admin',
                 email='admin@taskit.com',
                 is_staff=True,
                 is_superuser=True,
+                is_active=True,
                 user_role=role,
             )
             user.set_password('Admin1234!')
             user.save()
-            self.stdout.write(' Superuser created!')
-        else:
-            user = User.objects.get(username='admin')
-            user.is_staff = True
-            user.is_superuser = True
-            user.user_role = role
-            user.set_password('Admin1234!')
-            user.save()
-            self.stdout.write(' Superuser updated!')
+            # self.stdout.write(' Superuser created!')
+        # else:
+        #     user = User.objects.get(username='admin')
+        #     user.is_staff = True
+        #     user.is_superuser = True
+        #     user.user_role = role
+        #     user.set_password('Admin1234!')
+        #     user.save()
+        #     self.stdout.write(' Superuser updated!')
+            self.stdout.write(f'✅ Superuser created!')
+            self.stdout.write(f'is_staff: {user.is_staff}')
+            self.stdout.write(f'is_superuser: {user.is_superuser}')
+            self.stdout.write(f'is_active: {user.is_active}')
