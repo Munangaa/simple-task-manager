@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 # is_active=True,
                 # user_role=role,
             )
-        user.user_role = role,
+        user.user_role = role
         user.is_staff=True,
         user.is_superuser= True,
         user.is_active=True,
