@@ -17,36 +17,42 @@ class Command(BaseCommand):
             return
 
 
-        if User.objects.filter(username='admin').exists():
-            User.objects.filter(username='admin').delete()
-            self.stdout.write('Deleted existing admin')
+        # if User.objects.filter(username='admin').exists():
+        User.objects.filter(username='admin').delete()
+        self.stdout.write('Deleted existing admin')
 
         # if not User.objects.filter(username='admin').exists():
-        user = User.objects.create_superuser(
+        try:
+            user = User.objects.create_superuser(
                 username='admin',
                 email='admin@taskit.com',
                 password = 'Admin1234!',
-                # is_staff=True,
-                # is_superuser=True,
-                # is_active=True,
-                # user_role=role,
+                user_role=role,
             )
-        user.user_role = role
-        user.is_staff=True,
-        user.is_superuser= True,
-        user.is_active=True,
-        # user.set_password('Admin1234!')
-        user.save()
-            # self.stdout.write(' Superuser created!')
-        # else:
-        #     user = User.objects.get(username='admin')
-        #     user.is_staff = True
-        #     user.is_superuser = True
+
+            self.stdout.write('Superuser created!')
+            self.stdout.write(f'is_staff: {user.is_staff}')
+            self.stdout.write(f'is_superuser: {user.is_superuser}')
+            self.stdout.write(f'is_active: {user.is_active}')
+        except Exception as e:
+            self.stdout.write(f'error{e}')
         #     user.user_role = role
-        #     user.set_password('Admin1234!')
+        #     user.is_staff=True,
+        #     user.is_superuser= True,
+        #     user.is_active=True,
+        #
+        #     # user.set_password('Admin1234!')
         #     user.save()
-        #     self.stdout.write(' Superuser updated!')
-        self.stdout.write(f'Superuser created!')
-        self.stdout.write(f'is_staff: {user.is_staff}')
-        self.stdout.write(f'is_superuser: {user.is_superuser}')
-        self.stdout.write(f'is_active: {user.is_active}')
+        #     # self.stdout.write(' Superuser created!')
+        # # else:
+        # #     user = User.objects.get(username='admin')
+        # #     user.is_staff = True
+        # #     user.is_superuser = True
+        # #     user.user_role = role
+        # #     user.set_password('Admin1234!')
+        # #     user.save()
+        # #     self.stdout.write(' Superuser updated!')
+        # self.stdout.write(f'Superuser created!')
+        # self.stdout.write(f'is_staff: {user.is_staff}')
+        # self.stdout.write(f'is_superuser: {user.is_superuser}')
+        # self.stdout.write(f'is_active: {user.is_active}')
